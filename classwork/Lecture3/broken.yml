@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-0'
+Description: Broken CloudFormation template for testing purposes
+
+Resources:
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Property:
+      BucketName: !Ref UndefinedParameter  # Error: Undefined parameter
+      AccessControl: PublicReadWrite       # Warning: Not recommended due to security concerns
+
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-12345678
+      InstanceType: t2.micro
+      SecurityGroups: "sg-12345678" # Error: Should be a list, not a string
+      KeyName: !Ref UndefinedKey   # Error: Undefined parameter
+      UserData:
+        Fn::Base64: echo HelloWorld # Error: Incorrect Fn::Base64 syntax
+      Tags:
+        - Key: Name
+          Value: "MyInstance"
+        - Key Value: "InvalidTag" # Error: Incorrect tag format
+
+  MyLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code: s3://mybucket/mycode.zip # Error: Should be an object, not a string
+      Handler: index.handler
+      Runtime: python3.8
+      Role: !Ref UndefinedIAMRole # Error: Undefined parameter
+
+Outputs:
+  BucketNameOutput:
+    Value: !Ref MyS3Bucket
+    Export:
+      Name # Error: Missing value for 'Name'
