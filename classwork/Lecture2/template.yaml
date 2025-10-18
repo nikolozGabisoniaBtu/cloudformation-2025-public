@@ -1,0 +1,20 @@
+Resources:
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 
+        - 'bucket-with-semi-random-name-${RandomGUID}'
+        - { RandomGUID: !Select [0, !Split ["-", !Select [2, !Split ["/", !Ref AWS::StackId ]]]] }
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
+
+Outputs:
+  S3BucketName:
+    Value: !Ref MyS3Bucket
+    Description: The name of the S3 bucket.
+  S3BucketUrl:
+    Value: !Sub https://${MyS3Bucket}.s3.amazonaws.com
+    Description: The URL of the S3 bucket.

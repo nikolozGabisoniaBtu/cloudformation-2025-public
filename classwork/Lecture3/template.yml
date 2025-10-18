@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: AWS CloudFormation workshop - Pseudo parameters.
+
+Parameters:
+  DatabaseUsername:
+    Description: Value to be used with the dbUsername SSM parameter. The default
+      value is set to 'alice', which users can override when creating a
+      CloudFormation stack.
+    Type: String
+    Default: alice
+
+  S3BucketNamePrefix:
+    Description: The prefix to use for your S3 bucket
+    Type: String
+    Default: cfn-workshop
+    AllowedPattern: ^(?!(^xn--|.$))^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$
+    ConstraintDescription: Bucket name prefix can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a
+      hyphen (-).
+
+  ExistingRoleArn:
+    Type: String
+    Description: ARN of the existing IAM role to be used by the Lambda function.
+
+Resources:
+  BasicParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: dbUsername
+      Type: String
+      Value: !Ref DatabaseUsername
+      Description: SSM Parameter for database username.
+
+  DemoLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.lambda_handler
+      Role: !Ref ExistingRoleArn
+      Runtime: python3.12
+      Code:
+        ZipFile: |
+          import boto3
+          client = boto3.client('ssm')
+          def lambda_handler(event, context):
+              response = client.get_parameter(Name='dbUsername')
+              print(f'SSM dbUsername parameter value: {response["Parameter"]["Value"]}')
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${S3BucketNamePrefix}-${AWS::Region}-${AWS::AccountId}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
