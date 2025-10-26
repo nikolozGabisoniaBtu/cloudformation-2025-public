@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Simple template that passes all three custom rules'
+
+Resources:
+  # S3 Bucket that passes BucketPolicy rule
+  MyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: btu-simple-bucket
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: PublicAccessAllowed
+          Value: 'true'
+
+  # EC2 Instance that passes InstancePolicy rule for t2.micro
+  MicroInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-12345678
+      InstanceType: t2.micro
+      Tags:
+        - Key: FreeTierEligible
+          Value: 'true'
+
+  # EC2 Instance that passes InstancePolicy rule for m5.large
+  LargeInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-12345678
+      InstanceType: m5.large
+      Tags:
+        - Key: PerformanceCritical
+          Value: 'true'
+
+  # EC2 Volume that passes VolumePolicy rule
+  MyVolume:
+    Type: AWS::EC2::Volume
+    Properties:
+      AvailabilityZone: us-east-1a
+      Size: 50
+      VolumeType: gp3
+      Tags:
+        - Key: Priority
+          Value: '5000'
