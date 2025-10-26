@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template
+
+Resources:
+  # Regular DynamoDB Table (non-PROD) - No Tags, No SSE
+  RegularDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: RegularTable
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  # PROD DynamoDB Table - Invalid SSEType, No DeletionPolicy
+  ProdDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ProdTable
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+        SSEType: AES256  # Not in allowed_algorithms (KMS only)
+      Tags:
+        - Key: /PROD/
+          Value: AppMyApplication  # PROD tag present
+        - Key: Environment
+          Value: Production
+    # No DeletionPolicy (defaults to Delete, fails PROD rule)

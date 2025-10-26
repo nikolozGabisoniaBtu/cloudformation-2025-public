@@ -1,0 +1,44 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template that passes all cfn-guard rules
+
+Resources:
+  # Regular DynamoDB Table (non-PROD)
+  RegularDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: RegularTable
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - Key: Environment
+          Value: Dev
+
+  # PROD DynamoDB Table
+  ProdDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain  # Required for PROD tables
+    Properties:
+      TableName: ProdTable
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+        SSEType: KMS  # Required for PROD tables
+      Tags:
+        - Key: /PROD/
+          Value: AppMyApplication  # Matches /PROD/ and starts with "App"
+        - Key: Environment
+          Value: Production

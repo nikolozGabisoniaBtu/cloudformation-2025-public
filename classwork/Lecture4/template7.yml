@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: AWS CloudFormation workshop - Linting and testing
+
+Resources:
+  SqsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      # Use `cfn-lint` to find issues on this example template, and
+      # then fix issues you found
+      DelaySeconds: 900
+      Tags:
+        - Key: Name
+          Value: workshop-sqs-queue
+        - Key: ProjectName
+          Value: Example
+
+Outputs:
+  SqsQueueURL:
+    Description: The URL of your Amazon SQS Queue
+    Value: !Ref SqsQueue
+
+  SqsQueueName:
+    Description: The name of your Amazon SQS Queue
+    Value: !GetAtt SqsQueue.QueueName

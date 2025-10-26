@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+# --- Example 1: Invalid Security Group Ingress Rule ---
+Resources:
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: "300.300.300.300/32"  # Invalid IP
+
+# --- Example 2: Missing Required Property in S3 Bucket ---
+  MyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      Tags:
+        - Key: Name
+          Value: MyBucket
+
+# --- Example 3: Incorrect Instance Type in a Specific Region ---
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.nano  # t3.nano is not available in some regions
+      ImageId: ami-12345678
+
+# --- Example 4: Invalid IAM Policy Action ---
+  MyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: MyPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: "s3:WrongAction"  # Invalid action
+                Resource: "*"
+
+# --- Example 5: Invalid Reference to a Nonexistent Parameter ---
+  MyInvalidReferenceInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref NonExistentParameter  # No such parameter defined
+      ImageId: ami-12345678
+
+# --- Example 6: Incorrect Condition Logic ---
+Parameters:
+  Environment:
+    Type: String
+    AllowedValues:
+      - dev
+      - prod
+
+Conditions:
+  IsProd: !Equals [!Ref Environment, "production"]  # "production" is not an allowed value
+
+Resources:
+  MyConditionBucket:
+    Type: AWS::S3::Bucket
+    Condition: IsProd

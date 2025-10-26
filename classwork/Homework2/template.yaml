@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Simple CloudFormation template for EC2 instance with logging bucket'
+
+Parameters:
+  AppEnv:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - production
+    Description: Application environment
+  
+  LogBucketNamePrefix:
+    Type: String
+    Description: Prefix for the S3 log bucket name
+    Default: app
+  
+  AmiID:
+    Type: AWS::EC2::Image::Id
+    Description: AMI ID for the EC2 instance
+  
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t2.small
+      - t2.medium
+    Description: Instance type for the EC2 instance
+
+Resources:
+  WebServerLogBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub '${LogBucketNamePrefix}-my-logs-${AWS::AccountId}'
+  
+  WebServerInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref AmiID
+      InstanceType: !Ref InstanceType
+      Tags:
+        - Key: Name
+          Value: !Sub 'web-server-${AppEnv}'
+        - Key: Environment
+          Value: !Ref AppEnv
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash -xe
+            yum update -y
+            export LOG_BUCKET=${WebServerLogBucket}
+            export APP_ENV=${AppEnv}
+
+Outputs:
+  WebServerInstanceId:
+    Description: ID of the EC2 instance
+    Value: !Ref WebServerInstance
+  
+  WebServerPublicDNS:
+    Description: Public DNS of the EC2 instance
+    Value: !GetAtt WebServerInstance.PublicDnsName
+  
+  WebServerLogBucketName:
+    Description: Name of the S3 bucket for logs
+    Value: !Ref WebServerLogBucket

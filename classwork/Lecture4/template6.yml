@@ -1,0 +1,9 @@
+Resources:
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: 'testname'
+Outputs:
+  S3BucketName:
+    Value: !Ref MyS3Bucket
+    Description: The name of the S3 bucket.

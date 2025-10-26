@@ -1,0 +1,9 @@
+let aws_dynamodb_table_resources = Resources.*[ Type == 'AWS::DynamoDB::Table' ]
+rule aws_dynamodb_table when %aws_dynamodb_table_resources !empty {
+  %aws_dynamodb_table_resources.Properties.Tags IN [[{"Key":"Environment","Value":"Dev"}], [{"Key":"/PROD/","Value":"AppMyApplication"},{"Key":"Environment","Value":"Production"}]]
+  %aws_dynamodb_table_resources.Properties.AttributeDefinitions == [{"AttributeName":"id","AttributeType":"S"}]
+  %aws_dynamodb_table_resources.Properties.TableName IN ["RegularTable", "ProdTable"]
+  %aws_dynamodb_table_resources.Properties.KeySchema == [{"AttributeName":"id","KeyType":"HASH"}]
+  %aws_dynamodb_table_resources.Properties.SSESpecification IN [{"SSEEnabled":true,"SSEType":"KMS"}, {"SSEEnabled":true}]
+  %aws_dynamodb_table_resources.Properties.BillingMode == "PAY_PER_REQUEST"
+}

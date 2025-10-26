@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS CloudFormation template for AWS WorkSpaces'
+
+Resources:
+  WorkSpacesDirectory:
+    Type: AWS::WorkSpaces::Workspace
+    Properties:
+      DirectoryId: !Ref WorkSpacesDirectoryId
+      UserName: 'exampleuser'
+      BundleId: 'wsb-b0s22j3d1'
+      RootVolumeEncryptionEnabled: true
+      UserVolumeEncryptionEnabled: true
+      WorkspaceProperties:
+        RunningMode: AUTO_STOP
+        RunningModeAutoStopTimeoutInMinutes: 60
+      Tags:
+        - Key: Name
+          Value: WorkSpaceExample
+
+Parameters:
+  WorkSpacesDirectoryId:
+    Type: String
+    Description: 'The ID of the AWS WorkSpaces directory to launch the workspace in.'
+
+Outputs:
+  WorkSpaceId:
+    Description: 'The ID of the created WorkSpace'
+    Value: !Ref WorkSpacesDirectory
+  
