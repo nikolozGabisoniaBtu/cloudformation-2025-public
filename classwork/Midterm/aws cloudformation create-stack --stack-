@@ -1,0 +1,1 @@
+aws cloudformation create-stack --stack-name hello-world-prep --template-body file:///home/user/cloudformation-2025/classwork/Lecture5/template2-prep.yml

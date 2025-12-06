@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'S3 Bucket with versioning, access control, and tags'
+
+Parameters:
+  BlockPublicAccess:
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: 'Enable or disable public access block'
+  
+  ProjectName:
+    Type: String
+    Default: 'MyWebApp'
+    Description: 'Project name for tagging'
+
+Conditions:
+  ShouldBlockPublicAccess: !Equals [!Ref BlockPublicAccess, 'true']
+
+Resources:
+  MyAppLogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'my-app-logs-${AWS::AccountId}'
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: !If [ShouldBlockPublicAccess, true, false]
+        BlockPublicPolicy: !If [ShouldBlockPublicAccess, true, false]
+        IgnorePublicAcls: !If [ShouldBlockPublicAccess, true, false]
+        RestrictPublicBuckets: !If [ShouldBlockPublicAccess, true, false]
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+
+Outputs:
+  BucketName:
+    Description: 'Name of the created S3 bucket'
+    Value: !Ref MyAppLogsBucket
+  BucketArn:
+    Description: 'ARN of the created S3 bucket'
+    Value: !GetAtt MyAppLogsBucket.Arn
+    

@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'RDS Database Instance Template'
+
+Parameters:
+  DBEngine:
+    Type: String
+    Description: 'Database engine type'
+    AllowedValues:
+      - mysql
+      - postgres
+    Default: mysql
+  
+  DBInstanceClass:
+    Type: String
+    Description: 'Database instance class'
+    Default: db.t3.micro
+  
+  AllocatedStorage:
+    Type: Number
+    Description: 'Allocated storage in GB'
+    Default: 20
+  
+  DBName:
+    Type: String
+    Description: 'Database name'
+
+  MasterUsername:
+    Type: String
+    Description: 'Master username for database'
+  
+  MasterUserPassword:
+    Type: String
+    Description: 'Master user password'
+    NoEcho: true
+  
+  DBSubnetGroupName:
+    Type: String
+    Description: 'Existing DB Subnet Group name'
+  
+  VPCSecurityGroupIds:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: 'VPC Security Group IDs'
+
+Resources:
+  MyRDSInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      Engine: !Ref DBEngine
+      DBInstanceClass: !Ref DBInstanceClass
+      AllocatedStorage: !Ref AllocatedStorage
+      DBName: !Ref DBName
+      MasterUsername: !Ref MasterUsername
+      MasterUserPassword: !Ref MasterUserPassword
+      VPCSecurityGroups: !Ref VPCSecurityGroupIds
+      DBSubnetGroupName: !Ref DBSubnetGroupName
+      PubliclyAccessible: false
+      DeletionProtection: true

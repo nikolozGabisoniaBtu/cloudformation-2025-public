@@ -1,0 +1,43 @@
+aws cloudformation deploy \
+  --template-body file://path/to/your/template.yaml \
+  --stack-name YourStackName \
+  --capabilities CAPABILITY_IAM \
+  --region your-aws-region
+
+
+aws cloudformation deploy \
+  --template-body file:///home/user/cloudformation-2025/classwork/Lecture7/condition-resource.yaml \
+  --stack-name ConditionStack \
+
+
+aws cloudformation create-stack --stack-name cfn-condition-test \
+    --template-body file:///home/user/cloudformation-2025/classwork/Lecture7/condition-resource.yaml \
+    --parameters ParameterKey="EnvType",ParameterValue="test"
+
+
+aws cloudformation create-stack --stack-name cfn-condition-prod \
+    --template-body file:///home/user/cloudformation-2025/classwork/Lecture7/condition-resource.yaml \
+    --parameters ParameterKey="EnvType",ParameterValue="prod"
+
+aws cloudformation create-stack --stack-name cfn-condition-test2 \
+    --template-body file:///home/user/cloudformation-2025/classwork/Lecture7/condition-resource2.yaml \
+    --parameters ParameterKey="EnvType",ParameterValue="test"
+
+aws cloudformation create-stack --stack-name cfn-condition-prod2 \
+    --template-body file:///home/user/cloudformation-2025/classwork/Lecture7/condition-resource2.yaml \
+    --parameters ParameterKey="EnvType",ParameterValue="prod"
+
+aws cloudformation create-stack --stack-name cfn-condition-prod3 \
+    --template-body file:///home/user/cloudformation-2025/classwork/Lecture7/condition-resource3.yaml \
+    --parameters ParameterKey="EnvType",ParameterValue="prod"
+
+aws cloudformation create-stack --stack-name cfn-resource1 \
+    --template-body file:///home/user/cloudformation-2025/classwork/Lecture7/condition-resource4.yaml
+
+aws cloudformation create-stack --stack-name cfn-resource2 \
+    --template-body file:///home/user/cloudformation-2025/classwork/Lecture7/condition-resource5.yaml
+
+aws cloudformation create-stack --stack-name cfn-resource3 \
+    --template-body file:///home/user/cloudformation-2025/classwork/Lecture7/condition-resource6.yaml \
+    --parameters ParameterKey="EmailAddress",ParameterValue="nikoloz.gabisonia.1@btu.edu.ge"
+

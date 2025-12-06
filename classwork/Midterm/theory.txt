@@ -1,0 +1,88 @@
+1. Define IaC
+Infrastructure as Code (IaC) is the practice of managing and provisioning infrastructure through machine-readable definition files rather than manual configuration. It allows you to define servers, networks, databases, and other infrastructure components in code (like JSON, YAML, or HCL), which can be version-controlled, tested, and automatically deployed. Benefits include consistency, repeatability, version control, and easier disaster recovery.
+2. Pseudo Parameters
+Pseudo parameters are predefined parameters automatically provided by CloudFormation that you can reference without declaring them.
+Known pseudo parameters:
+
+AWS::AccountId - AWS account ID
+AWS::Region - Region where stack is created
+AWS::StackId - Stack identifier
+AWS::StackName - Name of the stack
+AWS::NotificationARNs - List of notification ARNs
+AWS::Partition - Partition the resource is in (aws, aws-cn, aws-us-gov)
+AWS::URLSuffix - Suffix for URLs (amazonaws.com or specific regional suffix)
+AWS::NoValue - Removes corresponding resource property when returned
+
+3. Intrinsic Functions
+Known intrinsic functions:
+
+Fn::Ref or !Ref - Returns value of parameter or resource
+Fn::GetAtt or !GetAtt - Returns attribute value from a resource
+Fn::Join or !Join - Joins values with delimiter
+Fn::Sub or !Sub - Substitutes variables in string
+Fn::Select or !Select - Returns single object from list
+Fn::Split or !Split - Splits string into list
+Fn::GetAZs or !GetAZs - Returns list of Availability Zones
+Fn::Base64 or !Base64 - Encodes to Base64
+Fn::Cidr or !Cidr - Returns array of CIDR blocks
+Fn::FindInMap or !FindInMap - Returns value from mapping
+Fn::ImportValue or !ImportValue - Imports exported values from other stacks
+Fn::If or !If - Conditional function
+Fn::Equals or !Equals - Compares values
+Fn::Not, Fn::And, Fn::Or - Logical operations
+
+4. Deleting Resource Created with CloudFormation
+If you manually delete a resource that was created by CloudFormation and then run the same stack again (update):
+It will fail, because "stack already exists", you need to drop the stack and re run it.
+
+5. Difference: cloudformation-guard(cfn-guard) vs validate-template
+cloudformation-guard:
+
+Policy-as-code evaluation tool
+Validates templates against custom policy rules
+Checks for security, compliance, and best practices
+Can enforce organizational standards
+Writes rules in Guard DSL
+More comprehensive validation
+
+aws cloudformation validate-template:
+
+Basic syntax validation only
+Checks if template is well-formed JSON/YAML
+Validates parameter declarations
+Returns template description and parameters
+Does NOT validate logic or best practices
+Quick sanity check before deployment
+
+6. CloudFormation Template Sections
+Mandatory sections:
+
+Resources - ONLY mandatory section (defines AWS resources)
+
+Optional sections:
+
+AWSTemplateFormatVersion - Template version (typically "2010-09-09")
+Description - Text description of template
+Metadata - Additional template information
+Parameters - Input values for template
+Mappings - Key-value maps for conditional values
+Conditions - Control resource creation based on conditions
+Transform - Specifies SAM transforms or macros
+Outputs - Values returned after stack creation
+Rules - Validates parameter values during stack creation/update
+
+Template structure example:
+yamlAWSTemplateFormatVersion: '2010-09-09'
+Description: 'My template description'
+Metadata: {}
+Parameters: {}
+Mappings: {}
+Conditions: {}
+Transform: []
+Resources:        # MANDATORY
+  MyResource:
+    Type: AWS::S3::Bucket
+Outputs: {}
+The Resources section is the only required section - everything else is optional but commonly used for more sophisticated templates.Retry
+
+
