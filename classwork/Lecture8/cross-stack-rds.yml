@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: AWS CloudFormation - Cross-stack references - Simple RDS template.
+
+Resources:
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for RDS database
+      SubnetIds:
+        - !ImportValue cfn-workshop-PublicSubnet1
+        - !ImportValue cfn-workshop-PublicSubnet2
+
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for RDS database
+      VpcId: !ImportValue cfn-workshop-VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 10.0.0.0/16
+
+  DBInstance:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Delete
+    Properties:
+      DBName: workshopdb
+      DBInstanceIdentifier: cfn-workshop-db
+      AllocatedStorage: 20
+      DBInstanceClass: db.t3.micro
+      Engine: mysql
+      MasterUsername: admin
+      MasterUserPassword: Password123!
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups:
+        - !Ref DBSecurityGroup
+      BackupRetentionPeriod: 0
+      PubliclyAccessible: false
+
+Outputs:
+  DBEndpoint:
+    Description: The connection endpoint for the database
+    Value: !GetAtt DBInstance.Endpoint.Address
+    Export:
+      Name: cfn-workshop-DBEndpoint
+
+  DBName:
+    Description: The database name
+    Value: workshopdb
+    Export:
+      Name: cfn-workshop-DBName
+
+  TableName:
+    Description: The table name created in the database
+    Value: users
+    Export:
+      Name: cfn-workshop-TableName

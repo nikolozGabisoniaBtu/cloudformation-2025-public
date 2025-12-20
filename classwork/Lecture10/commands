@@ -1,0 +1,27 @@
+aws cloudformation create-stack \
+--region us-east-1 \
+--stack-name cfn-workshop-loop-rds \
+--template-body file://rds-loop.yml \
+--parameters ParameterKey=DBPassword,ParameterValue=test12345678 \
+--capabilities CAPABILITY_AUTO_EXPAND
+
+aws cloudformation create-stack \
+--region us-west-2 \
+--stack-name cfn-s3-loop \
+--template-body file://s3-example.yml \
+--capabilities CAPABILITY_AUTO_EXPAND
+
+#change sets
+
+aws cloudformation create-stack \
+--stack-name cfn-understanding-changesets \
+--template-body file://btu-lec10-changesets.yaml \
+--parameters ParameterKey=BucketName,ParameterValue='ng-123-unique-bucket'
+
+# create-change-set
+
+aws cloudformation create-change-set \
+--stack-name cfn-understanding-changesets \
+--template-body file://btu-lec10-changesets.yaml \
+--parameters ParameterKey=BucketName,ParameterValue='ng-123-unique-bucket' \
+--change-set-name 'some-changes-name'

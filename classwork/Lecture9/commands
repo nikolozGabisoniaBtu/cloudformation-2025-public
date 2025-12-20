@@ -1,0 +1,4 @@
+pip install -r requirements.txt -t .
+
+./script/deploy-cfn-template.sh lecture9-bucket us-east-1
+./script/invoke-lambda-function.sh lecture9-bucket zuck.jpg

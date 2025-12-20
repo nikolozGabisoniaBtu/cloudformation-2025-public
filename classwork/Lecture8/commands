@@ -1,0 +1,12 @@
+aws cloudformation create-stack \
+--stack-name cfn-workshop-cross-stacks-vpc \
+--template-body file://cross-stack-vpc.yml \
+--parameters ParameterKey=AvailabilityZones,ParameterValue=us-east-1a\\,us-east-1b
+
+aws cloudformation create-stack \
+--stack-name cfn-workshop-cross-stacks-rds \
+--template-body file://cross-stack-rds.yml
+
+aws cloudformation create-stack \
+--stack-name cfn-workshop-cross-stacks-ec2 \
+--template-body file://cross-stack-ec2.yml

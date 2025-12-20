@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create two MySQL RDS instances without Fn::ForEach
+
+Transform: AWS::LanguageExtensions
+
+Parameters:
+  DBInstanceClass:
+    Type: String
+    Default: db.t3.micro
+  DBName:
+    Type: String
+    Default: mydb
+  DBUser:
+    Type: String
+    Default: admin
+  DBPassword:
+    Type: String
+    NoEcho: true
+
+Resources:
+  Fn::ForEach::MySQLInstances:
+    - Identifier
+    - - RDS1
+      - RDS2
+    - MySQLInstance${Identifier}:
+        Type: AWS::RDS::DBInstance
+        Properties:
+          DBInstanceIdentifier: !Sub mysql-instance-${Identifier}
+          Engine: mysql
+          EngineVersion: "8.0"
+          DBInstanceClass: !Ref DBInstanceClass
+          MasterUsername: !Ref DBUser
+          MasterUserPassword: !Ref DBPassword
+          AllocatedStorage: 20
+          BackupRetentionPeriod: 0
+          PubliclyAccessible: false
+          DBName: !Sub ${DBName}${Identifier}
+          StorageType: gp2
+          DeletionProtection: false

@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation - Package and deploy.
+Resources:
+  PythonFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: cfn-python-function
+      Description: Python Function to return specific TimeZone time
+      Runtime: python3.12
+      Role:
+        Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/LabRole
+      Handler: lambda_function.handler
+      Code:
+        S3Bucket: lecture9-bucket
+        S3Key: cfn-package-deploy/fc34a6762008cb99bf14c8f4288f2b56
+Outputs:
+  LambdaFunction:
+    Description: AWS Lambda Python Function
+    Value:
+      Ref: PythonFunction
